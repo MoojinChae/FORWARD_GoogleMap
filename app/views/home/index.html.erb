@@ -61,7 +61,7 @@
 		markers = [];
 		$.ajax({
 			//url: "http://api.metro.net/agencies/lametro/routes/" + num + "/vehicles/",
-			url: "http://api.flightstats.com/flex/flightstatus/rest/v2/json/flightsNear/32.73/-117.19/50?appId=ee3397e9&appKey=fb56756943c52b106500a766ecb430ed&maxFlights=10",
+			url: "https://api.flightstats.com/flex/flightstatus/rest/v2/json/flightsNear/32.73/-117.19/50?appId=ee3397e9&appKey=fb56756943c52b106500a766ecb430ed&maxFlights=10",
 			//url: "<%= airplanes_path %>",
 			success: function(res){
 				for (i = 0; i < res.flightPositions.length; i++) {
