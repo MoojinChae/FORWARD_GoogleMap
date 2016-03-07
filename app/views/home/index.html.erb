@@ -42,12 +42,12 @@
 
 <script>
 	var markers = [];
-	var interval = 10000;
+	var interval = 5000;
 	var image = 'https://cdn4.iconfinder.com/data/icons/48x48-free-object-icons/48/Airplane.png';
 
 	$(document).on("ready page:load", function () {
 		ajaxCall();
-		//setInterval(function() {ajaxCall();}, interval);
+		setInterval(function() {ajaxCall();}, interval);
 	});
 
 	$('#refresh').click(function() {
@@ -55,23 +55,39 @@
 	});
 
 	function ajaxCall() {
-		for(i = 0; i<markers.length; i++) {
-			markers[i].setMap(null);
-		}
-		markers = [];
 		$.ajax({
+			url: "https://api.flightstats.com/flex/flightstatus/rest/v2/jsonp/flightsNear/32.73/-117.19/20?appId=ee3397e9&appKey=fb56756943c52b106500a766ecb430ed&maxFlights=10",
 			//url: "http://api.metro.net/agencies/lametro/routes/" + num + "/vehicles/",
-			url: "https://api.flightstats.com/flex/flightstatus/rest/v2/json/flightsNear/32.73/-117.19/50?appId=ee3397e9&appKey=fb56756943c52b106500a766ecb430ed&maxFlights=10",
 			//url: "<%= airplanes_path %>",
+			type: 'GET',
+			dataType: 'jsonp',
 			success: function(res){
+				for(i = 0; i<markers.length; i++) {
+					markers[i].setMap(null);
+				}
+				markers = [];
+
 				for (i = 0; i < res.flightPositions.length; i++) {
+					var pos = res.flightPositions[i].positions.length-1;
 					var marker = new google.maps.Marker({
-						position: {lat: res.flightPositions[i].positions[res.flightPositions[i].positions.length-1].lat,
-											 lng: res.flightPositions[i].positions[res.flightPositions[i].positions.length-1].lon},
+						position: {lat: res.flightPositions[i].positions[pos].lat,
+											 lng: res.flightPositions[i].positions[pos].lon},
 						map: map,
 						icon: image,
 						id: res.flightPositions[i].flightId
 					});
+					var markerContent = res.flightPositions[i].callsign; //+ ", "
+              							//+ "Speed : " + res.flightPositions[i].positions[pos].speedMph + "Mph, "
+              							//+ "Altitude : " + res.flightPositions[i].positions[pos].altitudeFt + "ft";
+
+					var infoWindow = new google.maps.InfoWindow();
+					infoWindow.setContent(markerContent);
+					infoWindow.open(map, marker);
+					//marker.set('content', markerContent);
+					//google.maps.event.addListener(marker, 'click', function () {
+          //    infoWindow.setContent(this.get('content'));
+          //    infoWindow.open(map, this);
+          //});
 					markers.push(marker);
 				}
 			},
