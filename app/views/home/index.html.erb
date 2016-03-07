@@ -42,12 +42,12 @@
 
 <script>
 	var markers = [];
-	var interval = 5000;
+	var interval = 10000;
 	var image = 'https://cdn4.iconfinder.com/data/icons/48x48-free-object-icons/48/Airplane.png';
 
 	$(document).on("ready page:load", function () {
 		ajaxCall();
-		setInterval(function() {ajaxCall();}, interval);
+		//setInterval(function() {ajaxCall();}, interval);
 	});
 
 	$('#refresh').click(function() {
@@ -61,15 +61,17 @@
 		markers = [];
 		$.ajax({
 			//url: "http://api.metro.net/agencies/lametro/routes/" + num + "/vehicles/",
-			//url: "https://api.flightstats.com/flex/flightstatus/rest/v2/json/flightsNear/32.73/-117.19/50?appId=ee3397e9&appKey=fb56756943c52b106500a766ecb430ed&maxFlights=20"
-			url: "<%= airplanes_path %>",
+			url: "https://api.flightstats.com/flex/flightstatus/rest/v2/json/flightsNear/32.73/-117.19/50?appId=ee3397e9&appKey=fb56756943c52b106500a766ecb430ed&maxFlights=10",
+			//url: "<%= airplanes_path %>",
+			dataType: 'jsonp',
 			success: function(res){
-				for (i = 0; i < res.items.length; i++) {
+				for (i = 0; i < res.flightPositions.length; i++) {
 					var marker = new google.maps.Marker({
-						position: {lat: res.items[i].latitude, lng: res.items[i].longitude},
+						position: {lat: res.flightPositions[i].positions[res.flightPositions[i].positions.length-1].lat,
+											 lng: res.flightPositions[i].positions[res.flightPositions[i].positions.length-1].lon},
 						map: map,
 						icon: image,
-						id: res.items[i].id
+						id: res.flightPositions[i].flightId
 					});
 					markers.push(marker);
 				}
